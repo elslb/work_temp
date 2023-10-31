@@ -16,11 +16,11 @@ pd.options.mode.chained_assignment = None
 
 # Constants
 US_CAL = USFederalHolidayCalendar()
-TODAY = datetime(2023, 11, 1)
+TODAY = datetime.now().date()
 TEMPLATE_FILE = r'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\Template\Blank calc file.xlsx'
 INPUT_DIRECTORY = r'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\Input'
 OUTPUT_DIRECTORY = r'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\Output'
-INPUT_FILE = os.path.join(INPUT_DIRECTORY, 'ValuationDateExtract_2023-11-01.xlsx')
+INPUT_FILE = os.path.join(INPUT_DIRECTORY, f'ValuationDateExtract_{TODAY}.xlsx')
 USHOLIDAYS = US_CAL.holidays(start=f'{TODAY.year}-01-01', end=f'{TODAY.year}-12-31').to_pydatetime()
 CURRENT_MONTH_START = datetime(year=TODAY.year, month=TODAY.month, day=1)
 NEXT_MONTH_START = CURRENT_MONTH_START + relativedelta(months=1)
