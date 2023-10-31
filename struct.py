@@ -1,10 +1,3 @@
-# Created by Erich Fernandes, FERNE22, Nov 2022
-# Some things in this script can be made into functions for efficiency
-# But for easy testing I left them as is
-# Because there are only two uses of the same function
-# If more sheets are added, create a function around the dataframe and worksheet lines and use that instead
-# Would be more efficient use of lines
-
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import calendar
@@ -61,7 +54,6 @@ templatefile = rf'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\T
 inputdirectory = rf'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\Input'
 outputdirectory = rf'\\CIBG-SRV-TOR08\dpss\ged_applications\beta\Structured Notes\Output'
 
-#inputfile = inputdirectory+rf'\ValuationDateExtract_2022-11-30.xlsx'
 inputfile = inputdirectory+rf'\ValuationDateExtract_2023-11-01.xlsx'
 
 
@@ -77,17 +69,6 @@ templatecols = (pd.read_excel(templatefile)).columns
 
 combineddf = maindf.join(notionaldf.set_index('Package Code'),on='Package Code', lsuffix='',rsuffix='_notional')
 combineddf.drop_duplicates(subset=['Package Code','Observation Date','Settlement Date','Notional'],keep='first',inplace=True,ignore_index=True)
-
-# combineddf = combineddf.astype({'CUSIP':str})
-# combineddf['CUSIP'] = combineddf['CUSIP'].str.strip()
-
-# combineddf = combineddf.astype({'ISM Code':str})
-# combineddf['ISM Code'] = combineddf['ISM Code'].str.strip()
-
-# combineddf = combineddf.astype({'Long Name':str})
-# combineddf['Long Name'] = combineddf['Long Name'].str.strip()
-
-
 
 tickerlist = tickerdf['ticker'].str.rsplit('.',n=1,expand=True)[0]
 
@@ -215,8 +196,6 @@ for day in currentmonthlist:
                                 
                     tickcounter += 1  
             
-            # df = pd.DataFrame(list(zip(cusiprefassetlist,cusipvallist,cusipsettlelist,cusiplist,cusipnotional,cusipinv,cusipident,cusiplongname,cusipauto)),columns =['ref','Observation Date','Settlement Date','Cusip','Notional','inventoryName','ident','Long Name','Autocall'])
-
             if isindf.empty == False:
             # Locating reference assets
                 isinrefassetlist = []
@@ -291,10 +270,7 @@ for day in currentmonthlist:
                                     isinmemory.append('')                 
                                     
                     tickcounter += 1   
-            
-            # cusipdf.to_csv(outputdirectory+rf'\cusip_draft_'+rf'{datetime.strftime(day,"%b %#d")}.csv', index=False)
-            # isindf.to_csv(outputdirectory+rf'\isin_draft_'+rf'{datetime.strftime(day,"%b %#d")}.csv', index=False)
-            # df.to_csv(outputdirectory+rf'\df_'+rf'{datetime.strftime(day,"%b %#d")}.csv', index=False)
+
 
             wb = load_workbook(filename = fileloc)
 
@@ -693,23 +669,6 @@ for day in currentmonthlist:
                         if d.value == 'Valid IC Date':
                             d.font = red
                             h.font = blue
-            
-                            # for col in range(1,ws.max_column+1):
-                            #     if ws.cell(row=1, column=col).value == "Reference Asset":
-                            #         ref_asset_col = col
-                            #         break
-                            
-                            # ref_asset_values = []
-                            # for row in range(startmergerow, endmergerow+1):
-                            #     ref_asset_values.append((ws.cell(row=row, column =ref_asset_col).value))
-                                                                        
-                            # ref_asset_values.sort(key=lambda x: x[0])
-                            
-                            # for i in range(startmergerow, endmergerow+1):
-                            #     ws.cell(row=i, column=ref_asset_col).value = ref_asset_values[i-startmergerow]   
-                                                
-                            # startmergerow = None
-                            # rowcounter += 1
 
             wb.save(fileloc)
             wb.close()
