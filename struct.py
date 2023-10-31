@@ -118,159 +118,77 @@ for day in currentmonthlist:
             isindf = isindf.reset_index(drop=True)
             
             
-            # Need to add Notional and Principal parsing
-            if cusipdf.empty == False:
-                # Locating reference assets
-                cusiprefassetlist = []
-                cusipfinaldaylist = []
-                cusipvallist = []
-                cusipsettlelist = []
-                cusiplist = []
-                cusipnotional = []
-                cusipmemory = []
-                cusipinv = []
-                cusipident = []
-                cusipauto = []
-                cusiptpayingint = []
-                cusipinterest = []
-                cusiplongname = []
+        def process_dataframe(df, tickerlist):
+            refassetlist = []
+            finaldaylist = []
+            vallist = []
+            settlelist = []
+            df_list = []  # Generic name to handle both cusip and isin
+            notional = []
+            memory = []
+            inv = []
+            ident = []
+            auto = []
+            tpayingint = []
+            interest = []
+            longname = []
 
-
-                # Using regex and tickerlist to find tickers in Long Name
-                cusiptickers = cusipdf['Long Name'].apply(lambda x: set.intersection(set(re.split('[ /]',x)), set(tickerlist)))
-                tickcounter = 0
-                    
-                for i in range(cusipdf.shape[0]):
-                    cusipdf.at[i, 'Paying Interest'] = f"=IF(AA{i+1}>=Y{i+1},TRUE,FALSE)"
-                    # cusipdf.at[i, 'Interest'] = = f"=AC{i+1}*D{i+1}/12"
-
-
-                # print('Printing cusiptickers {}'.format(cusiptickers))
-                for tickers in cusiptickers:
-                    tickers = list(tickers)
-                    # print(tickers)
-                    temptickerlist = []
-                    if len(tickers) == 0:
-                        cusiprefassetlist.append('NoTickerFound')    
-                        cusipvallist.append(datetime.strftime(cusipdf['Observation Date'][tickcounter],'%m/%d/%Y'))
-                        cusipsettlelist.append(datetime.strftime(cusipdf['Settlement Date'][tickcounter], '%m/%d/%Y'))
-                        cusiplist.append(cusipdf['CUSIP'][tickcounter])
-                        cusipnotional.append(cusipdf['Notional'][tickcounter])
-                        cusipinv.append(cusipdf['inventoryName'][tickcounter])
-                        cusipident.append(cusipdf['ident'][tickcounter])
-                        cusipfinaldaylist.append([datetime.strftime(cusipdf['Observation Date'][tickcounter], '%m/%d/%Y'),datetime.strftime(cusipdf['Settlement Date'][tickcounter],'%m/%d/%Y')\
-                            ,cusipdf['CUSIP'][tickcounter],'NoTickerFound'])
-                        cusipauto.append(cusipdf['Autocall Field'][tickcounter])
-                        cusiptpayingint.append(cusipdf['Paying Interest'][tickcounter])
-                        cusipinterest.append(cusipdf['Interest'][tickcounter])
-                        
-                        cusiplongname.append(cusipdf['Long Name'][tickcounter])
-                        
-                        if ('memory' in cusipdf['Long Name'][tickcounter].lower()):
-                            cusipmemory.append('Refer to previous month')
-                        else:
-                            cusipmemory.append('')
-                    else:                  
-                        for ticker in tickers:     
-                            if ticker != 'TD':
-                                cusiprefassetlist.append(ticker)
-                                cusipvallist.append(datetime.strftime(cusipdf['Observation Date'][tickcounter],'%m/%d/%Y'))
-                                cusipsettlelist.append(datetime.strftime(cusipdf['Settlement Date'][tickcounter],'%m/%d/%Y'))
-                                cusiplist.append(cusipdf['CUSIP'][tickcounter])
-                                cusipnotional.append(cusipdf['Notional'][tickcounter])
-                                cusipinv.append(cusipdf['inventoryName'][tickcounter])
-                                cusipident.append(cusipdf['ident'][tickcounter])
-                                cusipfinaldaylist.append([datetime.strftime(cusipdf['Observation Date'][tickcounter],'%m/%d/%Y'),datetime.strftime(cusipdf['Settlement Date'][tickcounter],'%m/%d/%Y')\
-                                    ,cusipdf['CUSIP'][tickcounter],ticker])
-                                cusipauto.append(cusipdf['Autocall Field'][tickcounter])
-                                cusiptpayingint.append(cusipdf['Paying Interest'][tickcounter])
-                                cusipinterest.append(cusipdf['Interest'][tickcounter])
-                                cusiplongname.append(cusipdf['Long Name'][tickcounter])
-                            
-                                
-                                if ('memory' in cusipdf['Long Name'][tickcounter].lower()):
-                                        cusipmemory.append('Refer to previous month')
-                                else:
-                                    cusipmemory.append('')
-
-                                
-                    tickcounter += 1  
-            
-            if isindf.empty == False:
-            # Locating reference assets
-                isinrefassetlist = []
-                isinfinaldaylist = []
-                isinvallist = []
-                isinsettlelist = []
-                isinlist = []
-                isinnotional = []
-                isinmemory = []
-                isininv = []
-                isinident = []
-                isinauto = []
-                isintpayingint = []
-                isininterest = []
-                isinlongname = []
-                
-
-                # Using regex and tickerlist to find tickers in Long Name
-                isintickers = isindf['Long Name'].apply(lambda x: set.intersection(set(re.split('[ /]',x)), set(tickerlist)))
-                tickcounter = 0
-                
-                for i in range(isindf.shape[0]):
-                    isindf.at[i, 'Paying Interest'] = f"=IF(AA{i+1}>=Y{i+1},TRUE,FALSE)"
-                    # isindf.at[i, 'Interest'] = = f"=AC{i+1}*D{i+1}/12"
-
-
-
-                for tickers in isintickers:
-                    tickers = list(tickers)
-                    temptickerlist = []
-                    if len(tickers) == 0:
-                        isinrefassetlist.append('NoTickerFound')    
-                        isinvallist.append(datetime.strftime(isindf['Observation Date'][tickcounter],'%m/%d/%Y'))
-                        isinsettlelist.append(datetime.strftime(isindf['Settlement Date'][tickcounter],'%m/%d/%Y'))
-                        isinlist.append(isindf['CUSIP'][tickcounter])
-                        isinnotional.append(isindf['Notional'][tickcounter])
-                        isininv.append(isindf['inventoryName'][tickcounter])
-                        isinident.append(isindf['ident'][tickcounter])
-                        isinfinaldaylist.append([datetime.strftime(isindf['Observation Date'][tickcounter],'%m/%d/%Y'),datetime.strftime(isindf['Settlement Date'][tickcounter],'%m/%d/%Y')\
-                            ,isindf['CUSIP'][tickcounter],'NoTickerFound'])
-                        isinauto.append(cusipdf['Autocall Field'][tickcounter])
-                        isintpayingint.append(cusipdf['Paying Interest'][tickcounter])
-                        isininterest.append(cusipdf['Interest'][tickcounter])
-                        isinlongname.append(cusipdf['Long Name'][tickcounter])
-                        
-                        if ('memory' in isindf['Long Name'][tickcounter].lower()):
-                            isinmemory.append('Refer to previous month')
-                        else:
-                            isinmemory.append('')
-
-                    else:                  
-                        for ticker in tickers:
-                            if ticker != 'TD':
-                                isinrefassetlist.append(ticker)
-                                isinvallist.append(datetime.strftime(isindf['Observation Date'][tickcounter],'%m/%d/%Y'))
-                                isinsettlelist.append(datetime.strftime(isindf['Settlement Date'][tickcounter],'%m/%d/%Y'))
-                                isinlist.append(isindf['CUSIP'][tickcounter])
-                                isinnotional.append(isindf['Notional'][tickcounter])
-                                isininv.append(isindf['inventoryName'][tickcounter])
-                                isinident.append(isindf['ident'][tickcounter])
-                                isinfinaldaylist.append([datetime.strftime(isindf['Observation Date'][tickcounter],'%m/%d/%Y'),datetime.strftime(isindf['Settlement Date'][tickcounter],'%m/%d/%Y')\
-                                    ,isindf['CUSIP'][tickcounter],ticker])
-                        
-                                isinauto.append(cusipdf['Autocall Field'][tickcounter])
-                                isintpayingint.append(cusipdf['Paying Interest'][tickcounter])
-                                isininterest.append(cusipdf['Interest'][tickcounter])
-                                isinlongname.append(cusipdf['Long Name'][tickcounter])                            
-                                
-                                if ('memory' in isindf['Long Name'][tickcounter].lower()):
-                                        isinmemory.append('Refer to previous month')
-                                else:
-                                    isinmemory.append('')                 
-                                    
-                    tickcounter += 1   
-
+            tickers = df['Long Name'].apply(lambda x: set.intersection(set(re.split('[ /]',x)), set(tickerlist)))
+            tickcounter = 0
+        
+            for i in range(df.shape[0]):
+                df.at[i, 'Paying Interest'] = f"=IF(AA{i+1}>=Y{i+1},TRUE,FALSE)"
+        
+            for tickers_set in tickers:
+                tickers_list = list(tickers_set)
+                if len(tickers_list) == 0:
+                    refassetlist.append('NoTickerFound')
+                    vallist.append(datetime.strftime(df['Observation Date'][tickcounter], '%m/%d/%Y'))
+                    settlelist.append(datetime.strftime(df['Settlement Date'][tickcounter], '%m/%d/%Y'))
+                    df_list.append(df['CUSIP'][tickcounter])
+                    notional.append(df['Notional'][tickcounter])
+                    inv.append(df['inventoryName'][tickcounter])
+                    ident.append(df['ident'][tickcounter])
+                    finaldaylist.append([datetime.strftime(df['Observation Date'][tickcounter], '%m/%d/%Y'),
+                                         datetime.strftime(df['Settlement Date'][tickcounter], '%m/%d/%Y'),
+                                         df['CUSIP'][tickcounter], 'NoTickerFound'])
+                    auto.append(df['Autocall Field'][tickcounter])
+                    tpayingint.append(df['Paying Interest'][tickcounter])
+                    interest.append(df['Interest'][tickcounter])
+                    longname.append(df['Long Name'][tickcounter])
+        
+                    memory_val = 'Refer to previous month' if 'memory' in df['Long Name'][tickcounter].lower() else ''
+                    memory.append(memory_val)
+                else:
+                    for ticker in tickers_list:
+                        if ticker != 'TD':
+                            refassetlist.append(ticker)
+                            vallist.append(datetime.strftime(df['Observation Date'][tickcounter], '%m/%d/%Y'))
+                            settlelist.append(datetime.strftime(df['Settlement Date'][tickcounter], '%m/%d/%Y'))
+                            df_list.append(df['CUSIP'][tickcounter])
+                            notional.append(df['Notional'][tickcounter])
+                            inv.append(df['inventoryName'][tickcounter])
+                            ident.append(df['ident'][tickcounter])
+                            finaldaylist.append([datetime.strftime(df['Observation Date'][tickcounter], '%m/%d/%Y'),
+                                                 datetime.strftime(df['Settlement Date'][tickcounter], '%m/%d/%Y'),
+                                                 df['CUSIP'][tickcounter], ticker])
+                            auto.append(df['Autocall Field'][tickcounter])
+                            tpayingint.append(df['Paying Interest'][tickcounter])
+                            interest.append(df['Interest'][tickcounter])
+                            longname.append(df['Long Name'][tickcounter])
+        
+                            memory_val = 'Refer to previous month' if 'memory' in df['Long Name'][tickcounter].lower() else ''
+                            memory.append(memory_val)
+        
+                tickcounter += 1
+        
+            return refassetlist, finaldaylist, vallist, settlelist, df_list, notional, memory, inv, ident, auto, tpayingint, interest, longname
+        
+        if not cusipdf.empty:
+            cusiprefassetlist, cusipfinaldaylist, cusipvallist, cusipsettlelist, cusiplist, cusipnotional, cusipmemory, cusipinv, cusipident, cusipauto, cusiptpayingint, cusipinterest, cusiplongname = process_dataframe(cusipdf, tickerlist)
+        
+        if not isindf.empty:
+            isinrefassetlist, isinfinaldaylist, isinvallist, isinsettlelist, isinlist, isinnotional, isinmemory, isininv, isinident, isinauto, isintpayingint, isininterest, isinlongname = process_dataframe(isindf, tickerlist)
 
             wb = load_workbook(filename = fileloc)
 
