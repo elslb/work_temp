@@ -26,12 +26,6 @@ CURRENT_MONTH_START = datetime(year=TODAY.year, month=TODAY.month, day=1)
 NEXT_MONTH_START = CURRENT_MONTH_START + relativedelta(months=1)
 CURRENT_MONTH_LIST = pd.date_range(CURRENT_MONTH_START, NEXT_MONTH_START - timedelta(days=1)).to_pydatetime().tolist()
 
-def process_dataframe(df, tickerlist):
-    # ... [same as your original function]
-
-def process_worksheet(ws, df, refassetlist, vallist, settlelist, list_, notional, memory, inv, ident, auto, tpayingint, interest):
-    # ... [same as your original function]
-
 def main():
     print('Obtaining Structures Data')
     main_df = pd.read_excel(INPUT_FILE, sheet_name='Structures')
